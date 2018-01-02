@@ -4,15 +4,12 @@ from dotenv import load_dotenv, find_dotenv
 import os
 load_dotenv(find_dotenv())
 
-print(os.environ.get("GOOGLE_ID"))
-print(os.environ.get("GOOGLE_SECRET"))
-
 application = Flask(__name__)
 application.config['GOOGLE_ID'] = os.environ.get("GOOGLE_ID")
 application.config['GOOGLE_SECRET'] = os.environ.get("GOOGLE_SECRET")
 application.debug = True
 application.secret_key = 'development'
-oauth = OAuth(app)
+oauth = OAuth(application)
 
 google = oauth.remote_app(
     'google',
