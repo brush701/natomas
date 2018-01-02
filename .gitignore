@@ -89,6 +89,9 @@ celerybeat-schedule
 # dotenv
 .env
 
+# Elastic Beanstalk
+.elasticbeanstalk/
+
 # virtualenv
 .venv
 venv/
