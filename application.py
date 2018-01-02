@@ -4,6 +4,8 @@ from dotenv import load_dotenv, find_dotenv
 import os
 load_dotenv(find_dotenv())
 
+print(os.environ.get("GOOGLE_ID"))
+print(os.environ.get("GOOGLE_SECRET"))
 
 app = Flask(__name__)
 app.config['GOOGLE_ID'] = os.environ.get("GOOGLE_ID")
