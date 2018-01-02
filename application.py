@@ -7,17 +7,17 @@ load_dotenv(find_dotenv())
 print(os.environ.get("GOOGLE_ID"))
 print(os.environ.get("GOOGLE_SECRET"))
 
-app = Flask(__name__)
-app.config['GOOGLE_ID'] = os.environ.get("GOOGLE_ID")
-app.config['GOOGLE_SECRET'] = os.environ.get("GOOGLE_SECRET")
-app.debug = True
-app.secret_key = 'development'
+application = Flask(__name__)
+application.config['GOOGLE_ID'] = os.environ.get("GOOGLE_ID")
+application.config['GOOGLE_SECRET'] = os.environ.get("GOOGLE_SECRET")
+application.debug = True
+application.secret_key = 'development'
 oauth = OAuth(app)
 
 google = oauth.remote_app(
     'google',
-    consumer_key=app.config.get('GOOGLE_ID'),
-    consumer_secret=app.config.get('GOOGLE_SECRET'),
+    consumer_key=application.config.get('GOOGLE_ID'),
+    consumer_secret=application.config.get('GOOGLE_SECRET'),
     request_token_params={
         'scope': 'email'
     },
@@ -29,7 +29,7 @@ google = oauth.remote_app(
 )
 
 
-@app.route('/')
+@application.route('/')
 def index():
     if 'google_token' in session:
         me = google.get('userinfo')
@@ -37,18 +37,18 @@ def index():
     return redirect(url_for('login'))
 
 
-@app.route('/login')
+@application.route('/login')
 def login():
     return google.authorize(callback=url_for('authorized', _external=True))
 
 
-@app.route('/logout')
+@application.route('/logout')
 def logout():
     session.pop('google_token', None)
     return redirect(url_for('index'))
 
 
-@app.route('/login/authorized')
+@application.route('/login/authorized')
 def authorized():
     resp = google.authorized_response()
     if resp is None:
@@ -67,4 +67,4 @@ def get_google_oauth_token():
 
 
 if __name__ == '__main__':
-    app.run()
+    application.run()
