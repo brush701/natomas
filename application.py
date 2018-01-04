@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 from flask import Flask, redirect, url_for, session, request, jsonify, g
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
-from googleapiclient.discovery import build
-from oauth2client.contrib import xsrfutil
 from functools import wraps
 import requests
 import json
@@ -17,29 +14,6 @@ application.config.from_pyfile('config.py')
 @application.route('/')
 def index():
   return print_index_table()
-=======
-from flask import Flask, redirect, url_for, session, request, jsonify
-from authlib.client.apps import google
-from authlib.flask.client import OAuth
-import json
-import os
-
-application = Flask(__name__, instance_relative_config=True)
-application.config.from_object('config')
-application.config.from_pyfile('config.py')
-application.secret_key = application.config["SECRET_KEY"]
-
-oauth = OAuth(application)
-google.register_to(oauth)
-
-@application.route('/')
-def index():
-    if 'google_token' in session:
-        token = session["google_token"]
-        user = google.parse_openid(token)
-        return json.dumps(user)
-    return redirect(url_for('login'))
->>>>>>> acda66ab4358048bd42954ca9ee27a91bc486425
 
 @application.route('/authorize')
 def authorize():
@@ -47,14 +21,8 @@ def authorize():
   flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
       application.config["CLIENT_SECRETS_FILE"], scopes=application.config["GOOGLE_SCOPES"])
 
-<<<<<<< HEAD
+
   flow.redirect_uri = url_for('oauth2callback', _external=True)
-=======
-@application.route('/login')
-def login():
-    callback_uri = url_for('authorized', _external=True)
-    return google.authorize_redirect(callback_uri)
->>>>>>> acda66ab4358048bd42954ca9ee27a91bc486425
 
   authorization_url, state = flow.authorization_url(
       # Enable offline access so that you can refresh an access token without
@@ -68,7 +36,6 @@ def login():
 
   return redirect(authorization_url)
 
-<<<<<<< HEAD
 
 @application.route('/oauth2callback')
 def oauth2callback():
@@ -163,17 +130,6 @@ def print_index_table():
           '    After clearing the token, if you <a href="/test">test the ' +
           '    API request</a> again, you should go back to the auth flow.' +
           '</td></tr></table>')
-=======
-@application.route('/oauth2callback')
-def authorized():
-    try:
-        token = google.authorize_access_token()
-    except OAuthException as e:
-        return "Access denied: {}".format(e)
-    session['google_token'] = token
-    user = google.parse_openid(token)
-    return json.dumps(user)
->>>>>>> acda66ab4358048bd42954ca9ee27a91bc486425
 
 if __name__ == '__main__':
   # When running locally, disable OAuthlib's HTTPs verification.
