@@ -36,7 +36,6 @@ def authorize():
 
   return redirect(authorization_url)
 
-
 @application.route('/oauth2callback')
 def oauth2callback():
     # Specify the state when creating the flow in the callback so that it can
@@ -60,33 +59,6 @@ def oauth2callback():
     else:
       return('An error occurred.' + print_index_table())
 
-@application.route('/revoke')
-def revoke():
-  if 'credentials' not in session:
-    return ('You need to <a href="/authorize">authorize</a> before ' +
-            'testing the code to revoke credentials.')
-
-  credentials = google.oauth2.credentials.Credentials(
-    **session['credentials'])
-
-  revoke = requests.post('https://accounts.google.com/o/oauth2/revoke',
-      params={'token': credentials.token},
-      headers = {'content-type': 'application/x-www-form-urlencoded'})
-
-  status_code = getattr(revoke, 'status_code')
-  if status_code == 200:
-    return('Credentials successfully revoked.' + print_index_table())
-  else:
-    return('An error occurred.' + print_index_table())
-
-
-@application.route('/clear')
-def clear_credentials():
-  if 'credentials' in session:
-    del session['credentials']
-  return ('Credentials have been cleared.<br><br>' +
-          print_index_table())
-
 #verify that email is in session and that it matches an authorized user
 def login_required(f):
     @wraps(f)
@@ -96,19 +68,6 @@ def login_required(f):
             return redirect(url_for('authorize', next=request.url))
         return f(*args, **kwargs)
     return decorated_function
-
-@application.route('/secret')
-@login_required
-def test_secret():
-    return '<p>success</p>'
-
-def credentials_to_dict(credentials):
-  return {'token': credentials.token,
-          'refresh_token': credentials.refresh_token,
-          'token_uri': credentials.token_uri,
-          'client_id': credentials.client_id,
-          'client_secret': credentials.client_secret,
-          'scopes': credentials.scopes}
 
 def print_index_table():
   return ('<table>' +
