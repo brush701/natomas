@@ -7,6 +7,9 @@ __pycache__/
 # C extensions
 *.so
 
+#Google OAuth
+client_secret*.json
+
 # Distribution / packaging
 .Python
 env/
