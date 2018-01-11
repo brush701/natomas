@@ -1,5 +1,4 @@
 from flask import Flask, redirect, url_for, session, request, jsonify, g
-import google.oauth2.credentials
 import google_auth_oauthlib.flow
 from functools import wraps
 import requests
@@ -93,6 +92,7 @@ if __name__ == '__main__':
   if application.config["DEBUG"]:
       os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
+
   obj = {}
   obj["web"] = {}
   obj["web"]["client_id"] = application.config["GOOGLE_CLIENT_KEY"]
@@ -108,4 +108,4 @@ if __name__ == '__main__':
 
   # Specify a hostname and port that are set as a valid redirect URI
   # for your API project in the Google API Console.
-  application.run('127.0.0.1', 8080, debug=True)
+  application.run('127.0.0.1', 80, debug=True)
