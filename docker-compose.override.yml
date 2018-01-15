@@ -1,15 +1,29 @@
-version: '2'
+version: '3.5'
 services:
   web:
+    build: .
     volumes:
       - ./app:/app
     ports:
-      - "80:80"
+      - 8000:8000
+    secrets:
+      - client-secret
+      - secret-key
     environment:
-      - FLASK_APP=application.py
-      - FLASK_DEBUG=1
+      - DEBUG=True
       - OAUTHLIB_INSECURE_TRANSPORT=1
-      - 'RUN=flask run --host=0.0.0.0 --port=80'
-    command: flask run --host=0.0.0.0 --port=80
+    command: gunicorn -b 0.0.0.0:8000 application:application
     # Infinite loop, to keep it alive, for debugging
     # command: bash -c "while true; do echo 'sleeping...' && sleep 10; done"
+  nginx:
+    build: nginx/
+    ports:
+      - 80:80
+    depends_on:
+      - web
+
+secrets:
+  client-secret:
+    file: ./client_secret.json
+  secret-key:
+    file: ./secret_key

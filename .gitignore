@@ -10,6 +10,8 @@ __pycache__/
 #Google OAuth
 client_secret*.json
 
+/bin/
+
 # Distribution / packaging
 .Python
 env/

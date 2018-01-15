@@ -6,8 +6,8 @@ import json
 import os
 import pdb
 
-application = Flask(__name__, instance_relative_config=True)
-application.config.from_object('config')
+application = Flask(__name__)
+#application.config.from_object('config')
 application.config.from_pyfile('config.py')
 
 #verify that email is in session and that it matches an authorized user
@@ -92,20 +92,6 @@ if __name__ == '__main__':
   if application.config["DEBUG"]:
       os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
-
-  obj = {}
-  obj["web"] = {}
-  obj["web"]["client_id"] = application.config["GOOGLE_CLIENT_KEY"]
-  obj["web"]["project_id"] = application.config["GOOGLE_PROJECT_ID"]
-  obj["web"]["auth_uri"] = application.config["GOOGLE_AUTH_URI"]
-  obj["web"]["token_uri"] = application.config["GOOGLE_TOKEN_URI"]
-  obj["web"]["auth_provider_x509_cert_url"] = application.config["GOOGLE_AUTH_PROVIDER_X509_CERT_URL"]
-  obj["web"]["client_secret"] = application.config["GOOGLE_CLIENT_SECRET"]
-  obj["web"]["redirect_uris"] = application.config["GOOGLE_REDIRECT_URIS"]
-  obj["web"]["javascript_origins"] = application.config["GOOGLE_JAVASCRIPT_ORIGINS"]
-  with open(application.config["CLIENT_SECRETS_FILE"], 'w') as outfile:
-      json.dump(obj, outfile)
-
   # Specify a hostname and port that are set as a valid redirect URI
   # for your API project in the Google API Console.
-  application.run('127.0.0.1', 80, debug=True)
+  application.run('0.0.0.0', 8000, debug=True)

@@ -1,7 +1,8 @@
 import os
 
-GOOGLE_CLIENT_KEY = os.environ.get("GOOGLE_ID")
-GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_SECRET")
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY_FILE = "/run/secrets/secret-key"
+with open(SECRET_KEY_FILE, 'r') as file:
+    SECRET_KEY = file.read()
 DEBUG = os.environ.get("DEBUG") == "True"
-CLIENT_SECRETS_FILE = "client_secret.json"
+CLIENT_SECRETS_FILE = "/run/secrets/client-secret"
+GOOGLE_SCOPES = ["email", "profile"]
