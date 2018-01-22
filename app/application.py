@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, session, request, jsonify, g
 import google_auth_oauthlib.flow
 from functools import wraps
+import psycopg2
 import requests
 import json
 import os
@@ -10,6 +11,17 @@ application = Flask(__name__)
 #application.config.from_object('config')
 application.config.from_pyfile('config.py')
 
+routes = {
+        "authorize": authorize,
+        "oauth2callback": oauth2callback
+}
+
+# Connect to database
+creds = Credentials(ServerConfig.ENVIRONMENT())
+dsn = "host=%s dbname=%s user=%s password=%s" % creds.database()
+connection = psycopg2.connect(dsn)
+cursor = connection.cursor()
+
 #verify that email is in session and that it matches an authorized user
 def login_required(f):
     @wraps(f)
@@ -18,13 +30,33 @@ def login_required(f):
             return redirect(url_for('authorize', next=request.url))
 
         #TODO: check if user is authorized
+        #request.headers
         return f(*args, **kwargs)
     return decorated_function
 
-@application.route('/')
-def index():
-  return print_index_table()
+@app.route('/', defaults={'path': ''})
+@app.route("/<string:path>")
+@app.route('/<path:path>')
+def base(path):
+    if not path:
+        return print_index_table()
+    else:
+        global connection
+        cursor = connection.cursor()
 
+        try:
+            cursor.execute('SELECT 1')
+        except:
+            connection = psycopg2.connect(dsn)
+            cursor = connection.cursor()
+
+        handler = routes.get("path")
+        if handler:
+            data = request.get_json()
+            if data:
+                resp = handler(data, cursor)
+                connection.commit()
+        cursor.close()
 @application.route('/authorize')
 def authorize():
   # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
